@@ -8,8 +8,8 @@ import lombok.Data;
 
 @Configuration
 @Data
-@PropertySource("classpath:config/admin.properties")
+@PropertySource("classpath:application.yml")
 public class GetProperty {
-	@Value("${adminpass}")
+	@Value("${server.adminpass}")
 	private String adminpass;
 }
