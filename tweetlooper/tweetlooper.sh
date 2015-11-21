@@ -1,4 +1,4 @@
-#!/bin/sh
+﻿#!/bin/sh
 
 APP_NAME=TweetLooper
 BASE_DIR=/var/tweetlooper
