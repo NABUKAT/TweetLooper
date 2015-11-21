@@ -10,6 +10,6 @@ import lombok.Data;
 @Data
 @PropertySource("classpath:application.yml")
 public class GetProperty {
-	@Value("${server.adminpass}")
+	@Value("${adminpass}")
 	private String adminpass;
 }
