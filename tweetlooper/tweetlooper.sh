@@ -3,7 +3,7 @@
 APP_NAME=TweetLooper
 BASE_DIR=/var/tweetlooper
 JAR_FILE=tweetlooper-0.0.1-SNAPSHOT.jar
-PID=$BASE_DIR/pid/tl.pid
+PID=$BASE_DIR/tl.pid
 
 case "$1" in
   "start" )
