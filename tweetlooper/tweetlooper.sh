@@ -2,7 +2,7 @@
 
 APP_NAME=TweetLooper
 BASE_DIR=/var/tweetlooper
-JAR_FILE=tweetlooper-1.0.0-SNAPSHOT.jar
+JAR_FILE=tweetlooper-0.0.1-SNAPSHOT.jar
 PID=$BASE_DIR/pid/tl.pid
 
 case "$1" in
@@ -25,6 +25,6 @@ case "$1" in
     fi
     ;;
   *)
-    echo "Usage: tweetlooper.sh {start|stop}"
+    echo "Usage: soramameserver.sh {start|stop}"
     exit 1
 esac
