@@ -1,0 +1,154 @@
+﻿<!DOCTYPE HTML>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta http-equiv="Content-Style-Type" content="text/css" />
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+
+<title>TweetLooper</title>
+
+<!-- Bootstrap core CSS -->
+<link href="/css/bootstrap.min.css" rel="stylesheet" />
+<link href="/css/style.css" rel="stylesheet" type="text/css" />
+<script type="text/javascript">
+<!--
+	function disp(id) {
+		// 「OK」時の処理開始 ＋ 確認ダイアログの表示
+		if (window.confirm('削除します。よろしいですか？')) {
+			location.href = "/lt_delete?id=" + id;
+		}
+		// 「キャンセル」時の処理開始
+		else {
+		}
+	}
+// -->
+</script>
+
+</head>
+
+<body>
+
+	<div id="container">
+
+		<div id="header">
+			<div class="row">
+				<div class="col-md-9">
+					<h2>
+						<a href="/index">TweetLooper</a>
+					</h2>
+				</div>
+				<div class="col-md-3">
+					<a th:href="@{/logout}" class="btn btn-default btn-xs">ログアウト</a>
+				</div>
+			</div>
+			<br clear="all" class="clear" />
+
+			<div id="wrapper">
+
+				<table border="0" cellspacing="15" cellpadding="0">
+					<tr>
+						<td id="side">
+							<div id="menu">
+								<ul>
+									<li class="normal"><span class="cicle">◆</span><a
+										href="/index">ループツイート</a></li>
+									<li class="normal"><span class="cicle">◆</span><a
+										href="/teiki">定期ツイート</a></li>
+									<li class="last"><span class="cicle">◆</span><a
+										href="/setting">設定</a></li>
+								</ul>
+
+								<br />
+
+							</div>
+						</td>
+						<td id="main">
+							<div class="contents">
+								<div class="row">
+									<h3>ループツイート</h3>
+								</div>
+								<div class="row">
+									<div class="text,col-md-12">
+										　「ツイート一覧」のツイートを<a href="/setting">設定</a>に従いループツイートします。
+									</div>
+								</div>
+								<br />
+								<div class="row">
+									<h3>ループツイートを追加</h3>
+								</div>
+								<div class="row">
+									<div class="text,col-md-12">
+										　ループツイートに追加する文字列を入力してください（140文字）</div>
+								</div>
+								<br />
+								<form role="form" action="#" th:action="@{/ltadd}" method="post"
+									id="ltform" autocomplete="off">
+									<div class="row">
+										<div class="col-md-11">
+											<div class="form-group">
+												<textarea name="lt" id="lt" class="form-control"
+													placeholder="ループツイートを追加します" required="required"
+													maxlength="140" cols="70" rows="2"></textarea>
+											</div>
+										</div>
+										<div class="col-md-1"></div>
+									</div>
+									<div class="row">
+										<div class="col-md-9"></div>
+										<div class="col-md-2">
+											<button id="btn-add" class="btn btn-primary">追加</button>
+										</div>
+										<div class="col-md-1"></div>
+									</div>
+								</form>
+								<br />
+								<div class="row">
+									<h3>ループツイート一覧</h3>
+								</div>
+								<p th:if="${#lists.isEmpty(looptws)}">ツイートはありません</p>
+								<table class="table table-striped"
+									th:if="${not #lists.isEmpty(looptws)}">
+									<thead>
+										<tr>
+											<th class="col-md-9">ツイート</th>
+											<th class="col-md-2">操作</th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr th:each="looptw : ${looptws}">
+											<td th:text="${looptw.msg}"></td>
+											<td><a href="#" th:onclick="'disp('+${looptw.id}+');'"
+												class="btn btn-default btn-xs">削除</a></td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+						</td>
+					</tr>
+				</table>
+			</div>
+		</div>
+
+		<div id="copyright">
+
+			Copyright（c）2015 <a href="http://noboke.sblo.jp/">NoBoke</a> all
+			rights reserved.
+
+		</div>
+	</div>
+	<!-- Bootstrap core JavaScript
+    ================================================== -->
+	<!-- Placed at the end of the document so the pages load faster -->
+	<script src="/js/jquery.min.js"></script>
+	<script src="/js/jquery.cookie.js"></script>
+	<script src="/js/bootstrap.min.js"></script>
+
+	<script type="text/javascript">
+	<!--
+		$(document).ready(function() {
+			$('#lt').focus();
+		});
+		-->
+	</script>
+</body>
+</html>
