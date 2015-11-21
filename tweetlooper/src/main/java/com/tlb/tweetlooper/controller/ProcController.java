@@ -1,9 +1,5 @@
 package com.tlb.tweetlooper.controller;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.util.Properties;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
@@ -16,6 +12,7 @@ import com.tlb.tweetlooper.entity.Admin;
 import com.tlb.tweetlooper.entity.LoopTweet;
 import com.tlb.tweetlooper.entity.Setting;
 import com.tlb.tweetlooper.entity.TeikiTweet;
+import com.tlb.tweetlooper.model.GetProperty;
 import com.tlb.tweetlooper.model.TweetSet;
 import com.tlb.tweetlooper.service.AdminService;
 import com.tlb.tweetlooper.service.LoopTweetService;
@@ -38,6 +35,9 @@ public class ProcController {
 
 	@Autowired
 	SettingService settingService;
+	
+	@Autowired
+	GetProperty getProperty;
 	
 	//
 	// ループツイート追加処理
@@ -132,10 +132,8 @@ public class ProcController {
 	
 	private String getAdminPass(){
 		String ret = null;
-		Properties conf = new Properties();
 		try {
-			conf.load(new FileInputStream(new File("admin.properties")));
-			ret = conf.getProperty("adminpass");
+			ret = getProperty.getAdminpass();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
