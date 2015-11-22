@@ -52,6 +52,7 @@ public class ViewController {
 		//ループツイート一覧の表示
 		List<LoopTweet> looptws = loopTweetService.findAll();
 		model.addAttribute("looptws", looptws);
+		model.addAttribute("listsize", looptws.size());
 		
 		return "index";
 	}
@@ -64,6 +65,7 @@ public class ViewController {
 		//定期ツイート一覧の表示
 		List<TeikiTweet> teikitws = teikiTweetService.findAll();
 		model.addAttribute("teikitws", teikitws);
+		model.addAttribute("listsize", teikitws.size());
 		
 		return "teiki";
 	}

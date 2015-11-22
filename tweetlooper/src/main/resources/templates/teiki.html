@@ -103,7 +103,7 @@
 								</form>
 								<br />
 								<div class="row">
-									<h3>定期ツイート一覧</h3>
+									<h3>定期ツイート一覧　（<span th:text="${listsize}"></span>件）</h3>
 								</div>
 								<p th:if="${#lists.isEmpty(teikitws)}">ツイートはありません</p>
 								<table class="table table-striped"
