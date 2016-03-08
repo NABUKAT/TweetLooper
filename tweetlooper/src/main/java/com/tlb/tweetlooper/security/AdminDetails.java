@@ -17,7 +17,7 @@ public class AdminDetails extends org.springframework.security.core.userdetails.
 	private final Admin admin;
 
     public AdminDetails(Admin admin) {
-        super(admin.getAdmin_id(), admin.getAdmin_pass(), AuthorityUtils.createAuthorityList("ROLE_USER"));
+        super(admin.getAdmin_name(), admin.getAdmin_pass(), AuthorityUtils.createAuthorityList("ROLE_USER"));
         this.admin = admin;
     }
 }

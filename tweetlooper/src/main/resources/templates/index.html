@@ -117,7 +117,7 @@
 									<tbody>
 										<tr th:each="looptw : ${looptws}">
 											<td th:text="${looptw.msg}"></td>
-											<td><a href="#" th:onclick="'disp('+${looptw.id}+');'"
+											<td><a href="#" th:onclick="'disp('+${looptw.lt_id}+');'"
 												class="btn btn-default btn-xs">削除</a></td>
 										</tr>
 									</tbody>

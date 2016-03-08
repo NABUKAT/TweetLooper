@@ -117,7 +117,7 @@
 									<tbody>
 										<tr th:each="teikitw : ${teikitws}">
 											<td th:text="${teikitw.msg}"></td>
-											<td><a href="#" th:onclick="'disp('+${teikitw.id}+');'"
+											<td><a href="#" th:onclick="'disp('+${teikitw.tt_id}+');'"
 												class="btn btn-default btn-xs">削除</a></td>
 										</tr>
 									</tbody>

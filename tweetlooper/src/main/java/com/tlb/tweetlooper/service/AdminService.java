@@ -1,14 +1,13 @@
 package com.tlb.tweetlooper.service;
 
-import com.tlb.tweetlooper.entity.*;
-import com.tlb.tweetlooper.repository.AdminRepository;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
+import com.tlb.tweetlooper.entity.Admin;
+import com.tlb.tweetlooper.repository.AdminRepository;
 
 @Service
 @Transactional
@@ -17,18 +16,18 @@ public class AdminService{
 	AdminRepository adminRepository;
 	   
 	public List<Admin> findAll() {
-	  return adminRepository.findAll(new Sort(Sort.Direction.ASC, "id"));
+	  return adminRepository.findAll();
 	}
 	   
 	public Admin save(Admin admin) {
 	  return adminRepository.save(admin);
 	}
 	   
-	public void delete(String id) {
+	public void delete(Long id) {
 	  adminRepository.delete(id);
 	}
 	   
-	public Admin find(String id) {
+	public Admin find(Long id) {
 	  return adminRepository.findOne(id);
 	}
 }

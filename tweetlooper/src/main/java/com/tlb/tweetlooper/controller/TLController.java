@@ -1,8 +1,14 @@
 package com.tlb.tweetlooper.controller;
 
+import java.security.Principal;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -20,24 +26,110 @@ import com.tlb.tweetlooper.service.SettingService;
 import com.tlb.tweetlooper.service.TeikiTweetService;
 
 @Controller
-public class ProcController {
-	@Autowired
-	PasswordEncoder passwordEncoder;
+public class TLController {
 
 	@Autowired
-	AdminService adminService;
+	PasswordEncoder passwordEncoder;
 	
 	@Autowired
 	LoopTweetService loopTweetService;
-	
+
 	@Autowired
 	TeikiTweetService teikiTweetService;
 
 	@Autowired
 	SettingService settingService;
-	
+
+	@Autowired
+	AdminService adminService;
+
 	@Autowired
 	GetProperty getProperty;
+	
+	private Admin admin;
+
+	//
+	// ログイン画面ビュー
+	//
+	@RequestMapping(value = "/login", method = RequestMethod.GET)
+	public String login() {
+		return "login";
+	}
+
+	//
+	// ホーム画面ビュー
+	//
+	@RequestMapping(value = "/", method = RequestMethod.GET)
+	public String root() {
+		return "redirect:/index";
+	}
+
+	@RequestMapping(value = "/index", method = RequestMethod.GET)
+	public String index(Model model, Principal principal) {
+		// ログインユーザの取得
+		Authentication auth = (Authentication) principal;
+		User user = (User) auth.getPrincipal();
+		List<Admin> admins = adminService.findAll();
+		for (Admin a : admins) {
+			if(a.getAdmin_name().equals(user.getUsername())){
+				admin = a;
+			}
+		}
+
+		// ループツイート一覧の表示
+		List<LoopTweet> looptws = admin.getLtlist();
+		model.addAttribute("looptws", looptws);
+		model.addAttribute("listsize", looptws.size());
+
+		return "index";
+	}
+
+	@RequestMapping(value = "/teiki", method = RequestMethod.GET)
+	public String teiki(Model model, Principal principal) {
+		// ログインユーザの取得
+		Authentication auth = (Authentication) principal;
+		User user = (User) auth.getPrincipal();
+		List<Admin> admins = adminService.findAll();
+		for (Admin a : admins) {
+			if(a.getAdmin_name().equals(user.getUsername())){
+				admin = a;
+			}
+		}
+		
+		// 定期ツイート一覧の表示
+		List<TeikiTweet> teikitws = admin.getTtlist();
+		model.addAttribute("teikitws", teikitws);
+		model.addAttribute("listsize", teikitws.size());
+
+		return "teiki";
+	}
+
+	@RequestMapping(value = "/setting", method = RequestMethod.GET)
+	public String setting(Model model, Principal principal) {
+		// ログインユーザの取得
+		Authentication auth = (Authentication) principal;
+		User user = (User) auth.getPrincipal();
+		List<Admin> admins = adminService.findAll();
+		for (Admin a : admins) {
+			if(a.getAdmin_name().equals(user.getUsername())){
+				admin = a;
+			}
+		}
+		
+		// 設定読み出し
+		Setting setting = admin.getSetting();
+		TweetSet ts = new TweetSet();
+		ts.twsw = setting.isTwswitch();
+		ts.ltmin = setting.getLt_time();
+		ts.ttmin = setting.getTt_time();
+		ts.accessToken = setting.getAccessToken();
+		ts.consumerKey = setting.getConsumerKey();
+		ts.consumerSecret = setting.getConsumerSecret();
+		ts.accessTokenSecret = setting.getAccessTokenSecret();
+		model.addAttribute("twsetting", ts);
+
+		return "setting";
+	}
 	
 	//
 	// ループツイート追加処理
@@ -47,6 +139,7 @@ public class ProcController {
 		//追加処理
 		LoopTweet loopTweet = new LoopTweet();
 		loopTweet.setMsg(lt);
+		loopTweet.setAdmin(admin);
 		loopTweetService.save(loopTweet);
 		
 		return "redirect:/index";
@@ -69,7 +162,7 @@ public class ProcController {
 	@RequestMapping(value = "twsetting", method = RequestMethod.POST)
 	public String ltset(@ModelAttribute("twsetting") TweetSet twsetting){
 		//設定
-		Setting setting = settingService.find(1);
+		Setting setting = admin.getSetting();
 		setting.setTwswitch(twsetting.isTwsw());
 		setting.setLt_time(twsetting.getLtmin());
 		setting.setTt_time(twsetting.getTtmin());
@@ -77,7 +170,8 @@ public class ProcController {
 		setting.setAccessTokenSecret(twsetting.getAccessTokenSecret());
 		setting.setConsumerKey(twsetting.getConsumerKey());
 		setting.setConsumerSecret(twsetting.getConsumerSecret());
-		settingService.save(setting);
+		Setting savedset = settingService.save(setting);
+		admin.setSetting(savedset);
 		
 		return "redirect:/setting";
 	}
@@ -90,6 +184,7 @@ public class ProcController {
 		//追加処理
 		TeikiTweet teikiTweet = new TeikiTweet();
 		teikiTweet.setMsg(tt);
+		teikiTweet.setAdmin(admin);
 		teikiTweetService.save(teikiTweet);
 		
 		return "redirect:/teiki";
@@ -107,6 +202,14 @@ public class ProcController {
 	}
 	
 	//
+	// 管理ユーザ新規登録View
+	//
+	@RequestMapping(value = "makeuser", method = RequestMethod.GET)
+	public String makeuser() {
+		return "makeuser";
+	}
+	
+	//
 	// ユーザ登録処理
 	//
 	@RequestMapping(value = "makeuser", method = RequestMethod.POST)
@@ -118,8 +221,16 @@ public class ProcController {
 		String pass = getAdminPass();
 		if(adminpass.equals(pass)){
 			Admin admin = new Admin();
-			admin.setAdmin_id(email);
-			admin.setAdmin_pass(passwordEncoder.encode(password));
+			admin.setAdmin_name(email);
+			admin.setAdmin_pass(passwordEncoder.encode(password));			
+			//デフォルトのセッティング
+			Setting setting = new Setting();
+			setting.setLt_time(30);
+			setting.setTt_time(120);
+			setting.setTwswitch(false);
+			Setting savedset = settingService.save(setting);
+			admin.setSetting(savedset);
+			
 			adminService.save(admin);
 			System.out.println("Adminユーザを登録しました");
 		}

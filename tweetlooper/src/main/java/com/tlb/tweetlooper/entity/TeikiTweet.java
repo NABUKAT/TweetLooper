@@ -4,6 +4,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 
 import lombok.Data;
 
@@ -12,8 +14,11 @@ import lombok.Data;
 public class TeikiTweet {
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)
-	public Integer id;
+	public Integer tt_id;
 
 	public String msg;
 
+	@ManyToOne(targetEntity=Admin.class)
+	@JoinColumn(name="admin_id")
+	public Admin admin;
 }
