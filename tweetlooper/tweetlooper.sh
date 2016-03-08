@@ -25,6 +25,6 @@ case "$1" in
     fi
     ;;
   *)
-    echo "Usage: soramameserver.sh {start|stop}"
+    echo "Usage: tweetlooper.sh {start|stop}"
     exit 1
 esac
