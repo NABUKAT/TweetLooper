@@ -107,7 +107,7 @@ public class TweetLooperBot {
 
 	// ツイート
 	public void doTweet(String tw, Setting setting) {
-		/*try {
+		try {
 			// 設定
 			ConfigurationBuilder cb = new ConfigurationBuilder();
 			cb.setDebugEnabled(true).setOAuthConsumerKey(setting.getConsumerKey()).setOAuthConsumerSecret(setting.getConsumerSecret())
@@ -119,11 +119,11 @@ public class TweetLooperBot {
 		} catch (TwitterException e) {
 			System.out.println("ツイートに失敗しました");
 			e.printStackTrace();
-		}*/
+		}
 
 		// テスト用
-		System.out.println("----------------------------");
-		System.out.println("tw = " + tw);
+		//System.out.println("----------------------------");
+		//System.out.println("tw = " + tw);
 	}
 
 	// タイマー
