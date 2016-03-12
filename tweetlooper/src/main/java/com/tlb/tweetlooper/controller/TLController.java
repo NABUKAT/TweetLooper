@@ -75,6 +75,7 @@ public class TLController {
 				admin = a;
 			}
 		}
+		model.addAttribute("username", user.getUsername());
 
 		// ループツイート一覧の表示
 		List<LoopTweet> looptws = admin.getLtlist();
@@ -95,6 +96,7 @@ public class TLController {
 				admin = a;
 			}
 		}
+		model.addAttribute("username", user.getUsername());
 		
 		// 定期ツイート一覧の表示
 		List<TeikiTweet> teikitws = admin.getTtlist();
@@ -115,6 +117,7 @@ public class TLController {
 				admin = a;
 			}
 		}
+		model.addAttribute("username", user.getUsername());
 		
 		// 設定読み出し
 		Setting setting = admin.getSetting();

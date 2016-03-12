@@ -38,95 +38,97 @@
 					</h2>
 				</div>
 				<div class="col-md-3">
-					<a th:href="@{/logout}" class="btn btn-default btn-xs">ログアウト</a>
+					<span th:text="${username}"></span>&ensp;&ensp;<a
+						th:href="@{/logout}" class="btn btn-default btn-xs">ログアウト</a>
 				</div>
 			</div>
 			<br clear="all" class="clear" />
+		</div>
+		<div id="wrapper">
 
-			<div id="wrapper">
+			<table border="0" cellspacing="15" cellpadding="0">
+				<tr>
+					<td id="side">
+						<div id="menu">
+							<ul>
+								<li class="normal"><span class="cicle">◆</span><a
+									href="/index">ループツイート</a></li>
+								<li class="normal"><span class="cicle">◆</span><a
+									href="/teiki">定期ツイート</a></li>
+								<li class="last"><span class="cicle">◆</span><a
+									href="/setting">設定</a></li>
+							</ul>
 
-				<table border="0" cellspacing="15" cellpadding="0">
-					<tr>
-						<td id="side">
-							<div id="menu">
-								<ul>
-									<li class="normal"><span class="cicle">◆</span><a
-										href="/index">ループツイート</a></li>
-									<li class="normal"><span class="cicle">◆</span><a
-										href="/teiki">定期ツイート</a></li>
-									<li class="last"><span class="cicle">◆</span><a
-										href="/setting">設定</a></li>
-								</ul>
+							<br />
 
-								<br />
-
+						</div>
+					</td>
+					<td id="main">
+						<div class="contents">
+							<div class="row">
+								<h3>ループツイート</h3>
 							</div>
-						</td>
-						<td id="main">
-							<div class="contents">
-								<div class="row">
-									<h3>ループツイート</h3>
+							<div class="row">
+								<div class="text,col-md-12">
+									&ensp;&ensp;「ツイート一覧」のツイートを<a href="/setting">設定</a>に従いループツイートします。
 								</div>
-								<div class="row">
-									<div class="text,col-md-12">
-										　「ツイート一覧」のツイートを<a href="/setting">設定</a>に従いループツイートします。
-									</div>
-								</div>
-								<br />
-								<div class="row">
-									<h3>ループツイートを追加</h3>
-								</div>
-								<div class="row">
-									<div class="text,col-md-12">
-										　ループツイートに追加する文字列を入力してください（140文字）</div>
-								</div>
-								<br />
-								<form role="form" action="#" th:action="@{/ltadd}" method="post"
-									id="ltform" autocomplete="off">
-									<div class="row">
-										<div class="col-md-11">
-											<div class="form-group">
-												<textarea name="lt" id="lt" class="form-control"
-													placeholder="ループツイートを追加します" required="required"
-													maxlength="140" cols="70" rows="2"></textarea>
-											</div>
-										</div>
-										<div class="col-md-1"></div>
-									</div>
-									<div class="row">
-										<div class="col-md-9"></div>
-										<div class="col-md-2">
-											<button id="btn-add" class="btn btn-primary">追加</button>
-										</div>
-										<div class="col-md-1"></div>
-									</div>
-								</form>
-								<br />
-								<div class="row">
-									<h3>ループツイート一覧　（<span th:text="${listsize}"></span>件）</h3>
-								</div>
-								<p th:if="${#lists.isEmpty(looptws)}">ツイートはありません</p>
-								<table class="table table-striped"
-									th:if="${not #lists.isEmpty(looptws)}">
-									<thead>
-										<tr>
-											<th class="col-md-9">ツイート</th>
-											<th class="col-md-2">操作</th>
-										</tr>
-									</thead>
-									<tbody>
-										<tr th:each="looptw : ${looptws}">
-											<td th:text="${looptw.msg}"></td>
-											<td><a href="#" th:onclick="'disp('+${looptw.lt_id}+');'"
-												class="btn btn-default btn-xs">削除</a></td>
-										</tr>
-									</tbody>
-								</table>
 							</div>
-						</td>
-					</tr>
-				</table>
-			</div>
+							<br />
+							<div class="row">
+								<h3>ループツイートを追加</h3>
+							</div>
+							<div class="row">
+								<div class="text,col-md-12">
+									&ensp;&ensp;ループツイートに追加する文字列を入力してください（140文字）</div>
+							</div>
+							<br />
+							<form role="form" action="#" th:action="@{/ltadd}" method="post"
+								id="ltform" autocomplete="off">
+								<div class="row">
+									<div class="col-md-11">
+										<div class="form-group">
+											<textarea name="lt" id="lt" class="form-control"
+												placeholder="ループツイートを追加します" required="required"
+												maxlength="140" cols="70" rows="2"></textarea>
+										</div>
+									</div>
+									<div class="col-md-1"></div>
+								</div>
+								<div class="row">
+									<div class="col-md-9"></div>
+									<div class="col-md-2">
+										<button id="btn-add" class="btn btn-primary">追加</button>
+									</div>
+									<div class="col-md-1"></div>
+								</div>
+							</form>
+							<br />
+							<div class="row">
+								<h3>
+									ループツイート一覧 （<span th:text="${listsize}"></span>件）
+								</h3>
+							</div>
+							<p th:if="${#lists.isEmpty(looptws)}">ツイートはありません</p>
+							<table class="table table-striped"
+								th:if="${not #lists.isEmpty(looptws)}">
+								<thead>
+									<tr>
+										<th class="col-md-9">ツイート</th>
+										<th class="col-md-2">操作</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr th:each="looptw : ${looptws}">
+										<td th:text="${looptw.msg}"></td>
+										<td><a href="#" th:onclick="'disp('+${looptw.lt_id}+');'"
+											class="btn btn-default btn-xs">削除</a></td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+					</td>
+				</tr>
+			</table>
 		</div>
 
 		<div id="copyright">
