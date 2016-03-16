@@ -1,6 +1,7 @@
 package com.tlb.tweetlooper.entity;
 
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -18,7 +19,7 @@ public class LoopTweet {
 
 	public String msg;
 	
-	@ManyToOne(targetEntity=Admin.class)
+	@ManyToOne(targetEntity=Admin.class, fetch = FetchType.LAZY)
 	@JoinColumn(name="admin_id")
 	public Admin admin;
 }
