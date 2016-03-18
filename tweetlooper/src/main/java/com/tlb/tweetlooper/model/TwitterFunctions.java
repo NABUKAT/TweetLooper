@@ -27,10 +27,13 @@ public class TwitterFunctions {
 
 	// 検索したユーザリストを格納
 	private List<User> userlist = null;
+	
+	// 設定の一部を保持
+	private String accessToken = null;
 
 	// 初期設定
 	public void setting(Setting setting) {
-		if(twitter != null){
+		if(accessToken != null && setting.getAccessToken().equals(accessToken)){
 			return;
 		}
 		// 設定
