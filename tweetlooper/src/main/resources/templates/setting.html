@@ -28,6 +28,11 @@
 						th:href="@{/logout}" class="btn btn-default btn-xs">ログアウト</a>
 				</div>
 			</div>
+			<div class="row" th:if="${mta != null}">
+				<h4>
+					<span th:text="'@' + ${mta.screenname} + '、 フォロー：' + ${mta.friendsnum} + '、 フォロワー：' + ${mta.followersnum}"></span>
+				</h4>
+			</div>
 			<br clear="all" class="clear" />
 		</div>
 
@@ -42,6 +47,8 @@
 									href="/index">ループツイート</a></li>
 								<li class="normal"><span class="cicle">◆</span><a
 									href="/teiki">定期ツイート</a></li>
+								<li class="normal"><span class="cicle">◆</span><a
+									href="/search">検索</a></li>
 								<li class="last"><span class="cicle">◆</span><a
 									href="/setting">設定</a></li>
 							</ul>
@@ -147,7 +154,7 @@
 
 		<div id="copyright">
 
-			Copyright（c）2015 <a href="http://noboke.sblo.jp/">NoBoke</a> all
+			Copyright（c）2015 <a href="http://noboke.sblo.jp/">TrueWalk</a> all
 			rights reserved.
 
 		</div>

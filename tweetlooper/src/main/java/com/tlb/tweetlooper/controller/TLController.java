@@ -19,7 +19,9 @@ import com.tlb.tweetlooper.entity.LoopTweet;
 import com.tlb.tweetlooper.entity.Setting;
 import com.tlb.tweetlooper.entity.TeikiTweet;
 import com.tlb.tweetlooper.model.GetProperty;
+import com.tlb.tweetlooper.model.MyTwAccount;
 import com.tlb.tweetlooper.model.TweetSet;
+import com.tlb.tweetlooper.model.TwitterFunctions;
 import com.tlb.tweetlooper.service.AdminService;
 import com.tlb.tweetlooper.service.LoopTweetService;
 import com.tlb.tweetlooper.service.SettingService;
@@ -30,7 +32,7 @@ public class TLController {
 
 	@Autowired
 	PasswordEncoder passwordEncoder;
-	
+
 	@Autowired
 	LoopTweetService loopTweetService;
 
@@ -44,8 +46,11 @@ public class TLController {
 	AdminService adminService;
 
 	@Autowired
+	TwitterFunctions twitterFunctions;
+
+	@Autowired
 	GetProperty getProperty;
-	
+
 	private Admin admin;
 
 	//
@@ -71,11 +76,18 @@ public class TLController {
 		User user = (User) auth.getPrincipal();
 		List<Admin> admins = adminService.findAll();
 		for (Admin a : admins) {
-			if(a.getAdmin_name().equals(user.getUsername())){
+			if (a.getAdmin_name().equals(user.getUsername())) {
 				admin = a;
 			}
 		}
 		model.addAttribute("username", user.getUsername());
+
+		// アカウント情報の取得
+		if (twitterFunctions.checkTwitterSetting(admin.getSetting())) {
+			twitterFunctions.setting(admin.getSetting());
+			MyTwAccount mta = twitterFunctions.getAccount();
+			model.addAttribute("mta", mta);
+		}
 
 		// ループツイート一覧の表示
 		List<LoopTweet> looptws = admin.getLtlist();
@@ -92,11 +104,18 @@ public class TLController {
 		User user = (User) auth.getPrincipal();
 		List<Admin> admins = adminService.findAll();
 		for (Admin a : admins) {
-			if(a.getAdmin_name().equals(user.getUsername())){
+			if (a.getAdmin_name().equals(user.getUsername())) {
 				admin = a;
 			}
 		}
 		model.addAttribute("username", user.getUsername());
+
+		// アカウント情報の取得
+		if (twitterFunctions.checkTwitterSetting(admin.getSetting())) {
+			twitterFunctions.setting(admin.getSetting());
+			MyTwAccount mta = twitterFunctions.getAccount();
+			model.addAttribute("mta", mta);
+		}
 		
 		// 定期ツイート一覧の表示
 		List<TeikiTweet> teikitws = admin.getTtlist();
@@ -106,6 +125,29 @@ public class TLController {
 		return "teiki";
 	}
 
+	@RequestMapping(value = "search", method = RequestMethod.GET)
+	public String search(Model model, Principal principal) {
+		// ログインユーザの取得
+		Authentication auth = (Authentication) principal;
+		User user = (User) auth.getPrincipal();
+		List<Admin> admins = adminService.findAll();
+		for (Admin a : admins) {
+			if (a.getAdmin_name().equals(user.getUsername())) {
+				admin = a;
+			}
+		}
+		model.addAttribute("username", user.getUsername());
+
+		// アカウント情報の取得
+		if (twitterFunctions.checkTwitterSetting(admin.getSetting())) {
+			twitterFunctions.setting(admin.getSetting());
+			MyTwAccount mta = twitterFunctions.getAccount();
+			model.addAttribute("mta", mta);
+		}
+		
+		return "search";
+	}
+
 	@RequestMapping(value = "/setting", method = RequestMethod.GET)
 	public String setting(Model model, Principal principal) {
 		// ログインユーザの取得
@@ -113,11 +155,18 @@ public class TLController {
 		User user = (User) auth.getPrincipal();
 		List<Admin> admins = adminService.findAll();
 		for (Admin a : admins) {
-			if(a.getAdmin_name().equals(user.getUsername())){
+			if (a.getAdmin_name().equals(user.getUsername())) {
 				admin = a;
 			}
 		}
 		model.addAttribute("username", user.getUsername());
+
+		// アカウント情報の取得
+		if (twitterFunctions.checkTwitterSetting(admin.getSetting())) {
+			twitterFunctions.setting(admin.getSetting());
+			MyTwAccount mta = twitterFunctions.getAccount();
+			model.addAttribute("mta", mta);
+		}
 		
 		// 設定読み出し
 		Setting setting = admin.getSetting();
@@ -133,29 +182,29 @@ public class TLController {
 
 		return "setting";
 	}
-	
+
 	//
 	// ループツイート追加処理
 	//
 	@RequestMapping(value = "ltadd", method = RequestMethod.POST)
-	public String addlt(@RequestParam("lt") String lt){
-		//追加処理
+	public String addlt(@RequestParam("lt") String lt) {
+		// 追加処理
 		LoopTweet loopTweet = new LoopTweet();
 		loopTweet.setMsg(lt);
 		loopTweet.setAdmin(admin);
 		loopTweetService.save(loopTweet);
-		
+
 		return "redirect:/index";
 	}
-	
+
 	//
 	// ループツイート削除処理
 	//
 	@RequestMapping(value = "lt_delete", method = RequestMethod.GET)
-	public String deletelt(@RequestParam("id") Integer id){
-		//削除処理
+	public String deletelt(@RequestParam("id") Integer id) {
+		// 削除処理
 		loopTweetService.delete(id);
-		
+
 		return "redirect:/index";
 	}
 
@@ -163,8 +212,8 @@ public class TLController {
 	// ツイート設定処理
 	//
 	@RequestMapping(value = "twsetting", method = RequestMethod.POST)
-	public String ltset(@ModelAttribute("twsetting") TweetSet twsetting){
-		//設定
+	public String ltset(@ModelAttribute("twsetting") TweetSet twsetting) {
+		// 設定
 		Setting setting = admin.getSetting();
 		setting.setTwswitch(twsetting.isTwsw());
 		setting.setLt_time(twsetting.getLtmin());
@@ -175,7 +224,7 @@ public class TLController {
 		setting.setConsumerSecret(twsetting.getConsumerSecret());
 		Setting savedset = settingService.save(setting);
 		admin.setSetting(savedset);
-		
+
 		return "redirect:/setting";
 	}
 
@@ -183,27 +232,97 @@ public class TLController {
 	// 定期ツイート追加処理
 	//
 	@RequestMapping(value = "ttadd", method = RequestMethod.POST)
-	public String addtt(@RequestParam("tt") String tt){
-		//追加処理
+	public String addtt(@RequestParam("tt") String tt) {
+		// 追加処理
 		TeikiTweet teikiTweet = new TeikiTweet();
 		teikiTweet.setMsg(tt);
 		teikiTweet.setAdmin(admin);
 		teikiTweetService.save(teikiTweet);
-		
+
 		return "redirect:/teiki";
 	}
-	
+
 	//
 	// 定期ツイート削除処理
 	//
 	@RequestMapping(value = "tt_delete", method = RequestMethod.GET)
-	public String deletett(@RequestParam("id") Integer id){
-		//削除処理
+	public String deletett(@RequestParam("id") Integer id) {
+		// 削除処理
 		teikiTweetService.delete(id);
-		
+
 		return "redirect:/teiki";
 	}
+
+	//
+	// 検索処理
+	//
+	@RequestMapping(value = "searchproc", method = RequestMethod.POST)
+	public String searchproc(Model model, Principal principal, @RequestParam("word") String word) {
+		// ログインユーザの取得
+		Authentication auth = (Authentication) principal;
+		User user = (User) auth.getPrincipal();
+		List<Admin> admins = adminService.findAll();
+		for (Admin a : admins) {
+			if (a.getAdmin_name().equals(user.getUsername())) {
+				admin = a;
+			}
+		}
+		model.addAttribute("username", user.getUsername());
+
+		// アカウント情報の取得
+		if (twitterFunctions.checkTwitterSetting(admin.getSetting())) {
+			twitterFunctions.setting(admin.getSetting());
+			MyTwAccount mta = twitterFunctions.getAccount();
+			model.addAttribute("mta", mta);
+		}
+		// Twitterの設定が不十分なら検索しない
+		else{
+			model.addAttribute("setting", "notenough");
+			return "search";
+		}
+
+		model.addAttribute("setting", "enough");
+		// 検索結果を取得
+		List<String> list = twitterFunctions.findUsers(word);
+		model.addAttribute("searchlist", list);
+		model.addAttribute("listsize", list.size());
+
+		return "search";
+	}
 	
+	//
+	// ユーザフォロー処理
+	//
+	@RequestMapping(value = "followproc", method = RequestMethod.POST)
+	public String followproc(Model model, Principal principal) {
+		// ログインユーザの取得
+		Authentication auth = (Authentication) principal;
+		User user = (User) auth.getPrincipal();
+		List<Admin> admins = adminService.findAll();
+		for (Admin a : admins) {
+			if (a.getAdmin_name().equals(user.getUsername())) {
+				admin = a;
+			}
+		}
+		model.addAttribute("username", user.getUsername());
+
+		// アカウント情報の取得
+		if (twitterFunctions.checkTwitterSetting(admin.getSetting())) {
+			twitterFunctions.setting(admin.getSetting());
+			MyTwAccount mta = twitterFunctions.getAccount();
+			model.addAttribute("mta", mta);
+		}
+		// アカウント情報が不十分なら何もしない
+		else{
+			return "search";
+		}
+		
+		// フォロー処理
+		twitterFunctions.followUsers();
+		
+		return "search";
+	}
+
 	//
 	// 管理ユーザ新規登録View
 	//
@@ -211,40 +330,37 @@ public class TLController {
 	public String makeuser() {
 		return "makeuser";
 	}
-	
+
 	//
 	// ユーザ登録処理
 	//
 	@RequestMapping(value = "makeuser", method = RequestMethod.POST)
-	public String makeuser(
-			@RequestParam("email") String email,
-			@RequestParam("password") String password,
+	public String makeuser(@RequestParam("email") String email, @RequestParam("password") String password,
 			@RequestParam("adminpass") String adminpass) {
-		
+
 		String pass = getAdminPass();
-		if(adminpass.equals(pass)){
+		if (adminpass.equals(pass)) {
 			Admin admin = new Admin();
 			admin.setAdmin_name(email);
-			admin.setAdmin_pass(passwordEncoder.encode(password));			
-			//デフォルトのセッティング
+			admin.setAdmin_pass(passwordEncoder.encode(password));
+			// デフォルトのセッティング
 			Setting setting = new Setting();
 			setting.setLt_time(30);
 			setting.setTt_time(120);
 			setting.setTwswitch(false);
 			Setting savedset = settingService.save(setting);
 			admin.setSetting(savedset);
-			
+
 			adminService.save(admin);
 			System.out.println("Adminユーザを登録しました");
-		}
-		else{
+		} else {
 			System.out.println("管理者パスワードが違います");
 		}
-		
+
 		return "makeuser";
 	}
-	
-	private String getAdminPass(){
+
+	private String getAdminPass() {
 		String ret = null;
 		try {
 			ret = getProperty.getAdminpass();

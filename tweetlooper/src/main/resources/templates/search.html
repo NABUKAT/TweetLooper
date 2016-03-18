@@ -1,4 +1,4 @@
-﻿<!DOCTYPE HTML>
+<!DOCTYPE HTML>
 <html xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:th="http://www.thymeleaf.org">
 <head>
@@ -10,20 +10,6 @@
 <!-- Bootstrap core CSS -->
 <link href="/css/bootstrap.min.css" rel="stylesheet" />
 <link href="/css/style.css" rel="stylesheet" type="text/css" />
-<script type="text/javascript">
-<!--
-	function disp(id) {
-		// 「OK」時の処理開始 ＋ 確認ダイアログの表示
-		if (window.confirm('削除します。よろしいですか？')) {
-			location.href = "/lt_delete?id=" + id;
-		}
-		// 「キャンセル」時の処理開始
-		else {
-		}
-	}
-// -->
-</script>
-
 </head>
 
 <body>
@@ -44,11 +30,13 @@
 			</div>
 			<div class="row" th:if="${mta != null}">
 				<h4>
-					<span th:text="'@' + ${mta.screenname} + '、 フォロー：' + ${mta.friendsnum} + '、 フォロワー：' + ${mta.followersnum}"></span>
+					<span
+						th:text="'@' + ${mta.screenname} + '、 フォロー：' + ${mta.friendsnum} + '、 フォロワー：' + ${mta.followersnum}"></span>
 				</h4>
 			</div>
 			<br clear="all" class="clear" />
 		</div>
+
 		<div id="wrapper">
 
 			<table border="0" cellspacing="15" cellpadding="0">
@@ -67,68 +55,76 @@
 							</ul>
 
 							<br />
-
 						</div>
 					</td>
+
 					<td id="main">
 						<div class="contents">
 							<div class="row">
-								<h3>ループツイート</h3>
+								<h3>ユーザ検索・まとめてフォロー</h3>
 							</div>
 							<div class="row">
 								<div class="text,col-md-12">
-									&ensp;&ensp;「ツイート一覧」のツイートを<a href="/setting">設定</a>に従いループツイートします。
+									&ensp;&ensp;検索したユーザをリスト表示し、まとめてフォローします。<br />
+									&ensp;&ensp;&ensp;※ 検索結果は上限50ユーザで表示します。<br />
+									&ensp;&ensp;&ensp;※ フォロワーが500人を超えるまでは、アカウント凍結回避のため<br />
+									&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;1日のフォロー数を50人程度にとどめてください。
 								</div>
 							</div>
 							<br />
 							<div class="row">
-								<h3>ループツイートを追加</h3>
+								<h3>検索</h3>
 							</div>
-							<div class="row">
-								<div class="text,col-md-12">
-									&ensp;&ensp;ループツイートに追加する文字列を入力してください（140文字）</div>
-							</div>
-							<br />
-							<form role="form" action="#" th:action="@{/ltadd}" method="post"
-								id="ltform" autocomplete="off">
+							<form role="form" action="#" th:action="@{/searchproc}"
+								method="post" id="ttform" autocomplete="off">
 								<div class="row">
-									<div class="col-md-11">
+									<div class="col-md-10">
 										<div class="form-group">
-											<textarea name="lt" id="lt" class="form-control"
-												placeholder="ループツイートを追加します" required="required"
-												maxlength="140" cols="70" rows="2"></textarea>
+											<input type="text" name="word" id="tt" class="form-control"
+												placeholder="Twitter検索" required="required" maxlength="20"></input>
 										</div>
 									</div>
-									<div class="col-md-1"></div>
+									<div class="col-md-2">
+										<button id="btn-search" class="btn btn-primary">検索</button>
+									</div>
 								</div>
 								<div class="row">
-									<div class="col-md-9"></div>
-									<div class="col-md-2">
-										<button id="btn-add" class="btn btn-primary">追加</button>
+									<div class="col-md-12">
+										<span th:if="${setting == 'notenough'}"><font
+											color="red">設定項目が不足しています</font></span>
 									</div>
-									<div class="col-md-1"></div>
 								</div>
 							</form>
 							<br />
 							<div class="row">
 								<h3>
-									ループツイート一覧 （<span th:text="${listsize}"></span>件）
+									検索結果一覧<span th:if="${listsize != null}"> （<span
+										th:text="${listsize}"></span>件）
+									</span>
 								</h3>
 							</div>
-							<p th:if="${#lists.isEmpty(looptws)}">ツイートはありません</p>
+							<p th:if="${#lists.isEmpty(searchlist)}">検索結果はありません</p>
+							<div th:if="${not #lists.isEmpty(searchlist)}">
+								<form role="form" action="#" th:action="@{/followproc}"
+									method="post" id="ttform" autocomplete="off">
+									<div class="row">
+										<div class="col-md-2">
+											<button id="btn-follow" class="btn btn-primary">まとめてフォロー</button>
+										</div>
+									</div>
+								</form>
+								<br/>
+							</div>
 							<table class="table table-striped"
-								th:if="${not #lists.isEmpty(looptws)}">
+								th:if="${not #lists.isEmpty(searchlist)}">
 								<thead>
 									<tr>
-										<th class="col-md-9">ツイート</th>
-										<th class="col-md-2">操作</th>
+										<th class="col-md-10">ユーザ名</th>
 									</tr>
 								</thead>
 								<tbody>
-									<tr th:each="looptw : ${looptws}">
-										<td th:text="${looptw.msg}"></td>
-										<td><a href="#" th:onclick="'disp('+${looptw.lt_id}+');'"
-											class="btn btn-default btn-xs">削除</a></td>
+									<tr th:each="search : ${searchlist}">
+										<td th:text="${search}"></td>
 									</tr>
 								</tbody>
 							</table>
@@ -155,7 +151,7 @@
 	<script type="text/javascript">
 	<!--
 		$(document).ready(function() {
-			$('#lt').focus();
+			$('#ltmin').focus();
 		});
 		-->
 	</script>
