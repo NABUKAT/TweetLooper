@@ -3,7 +3,9 @@ package com.tlb.tweetlooper.model;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
+import org.springframework.web.context.WebApplicationContext;
 
 import com.tlb.tweetlooper.entity.Setting;
 
@@ -17,7 +19,11 @@ import twitter4j.TwitterFactory;
 import twitter4j.User;
 import twitter4j.conf.ConfigurationBuilder;
 
+/*
+ * Twitterのフォロー数等取得、検索、フォロー機能
+ */
 @Component
+@Scope(WebApplicationContext.SCOPE_SESSION)
 public class TwitterFunctions {
 
 	private Twitter twitter = null;
