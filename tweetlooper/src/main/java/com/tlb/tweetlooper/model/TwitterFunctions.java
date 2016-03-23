@@ -6,7 +6,7 @@ import java.util.List;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.WebApplicationContext;
-
+import org.springframework.context.annotation.ScopedProxyMode;
 import com.tlb.tweetlooper.entity.Setting;
 
 import twitter4j.IDs;
@@ -23,7 +23,7 @@ import twitter4j.conf.ConfigurationBuilder;
  * Twitterのフォロー数等取得、検索、フォロー機能
  */
 @Component
-@Scope(WebApplicationContext.SCOPE_SESSION)
+@Scope(proxyMode = ScopedProxyMode.TARGET_CLASS, value = WebApplicationContext.SCOPE_SESSION)
 public class TwitterFunctions {
 
 	private Twitter twitter = null;
