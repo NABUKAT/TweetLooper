@@ -51,8 +51,6 @@ public class TLController {
 	@Autowired
 	GetProperty getProperty;
 
-	private Admin admin;
-
 	//
 	// ログイン画面ビュー
 	//
@@ -75,13 +73,14 @@ public class TLController {
 		Authentication auth = (Authentication) principal;
 		User user = (User) auth.getPrincipal();
 		List<Admin> admins = adminService.findAll();
+		Admin admin = null;
 		for (Admin a : admins) {
 			if (a.getAdmin_name().equals(user.getUsername())) {
 				admin = a;
 			}
 		}
 		model.addAttribute("username", user.getUsername());
-
+		
 		// アカウント情報の取得
 		if (twitterFunctions.checkTwitterSetting(admin.getSetting())) {
 			twitterFunctions.setting(admin.getSetting());
@@ -103,6 +102,7 @@ public class TLController {
 		Authentication auth = (Authentication) principal;
 		User user = (User) auth.getPrincipal();
 		List<Admin> admins = adminService.findAll();
+		Admin admin = null;
 		for (Admin a : admins) {
 			if (a.getAdmin_name().equals(user.getUsername())) {
 				admin = a;
@@ -131,6 +131,7 @@ public class TLController {
 		Authentication auth = (Authentication) principal;
 		User user = (User) auth.getPrincipal();
 		List<Admin> admins = adminService.findAll();
+		Admin admin = null;
 		for (Admin a : admins) {
 			if (a.getAdmin_name().equals(user.getUsername())) {
 				admin = a;
@@ -154,6 +155,7 @@ public class TLController {
 		Authentication auth = (Authentication) principal;
 		User user = (User) auth.getPrincipal();
 		List<Admin> admins = adminService.findAll();
+		Admin admin = null;
 		for (Admin a : admins) {
 			if (a.getAdmin_name().equals(user.getUsername())) {
 				admin = a;
@@ -187,7 +189,18 @@ public class TLController {
 	// ループツイート追加処理
 	//
 	@RequestMapping(value = "ltadd", method = RequestMethod.POST)
-	public String addlt(@RequestParam("lt") String lt) {
+	public String addlt(Principal principal, @RequestParam("lt") String lt) {
+		// ログインユーザの取得
+		Authentication auth = (Authentication) principal;
+		User user = (User) auth.getPrincipal();
+		List<Admin> admins = adminService.findAll();
+		Admin admin = null;
+		for (Admin a : admins) {
+			if (a.getAdmin_name().equals(user.getUsername())) {
+				admin = a;
+			}
+		}
+		
 		// 追加処理
 		LoopTweet loopTweet = new LoopTweet();
 		loopTweet.setMsg(lt);
@@ -212,7 +225,18 @@ public class TLController {
 	// ツイート設定処理
 	//
 	@RequestMapping(value = "twsetting", method = RequestMethod.POST)
-	public String ltset(@ModelAttribute("twsetting") TweetSet twsetting) {
+	public String ltset(Principal principal, @ModelAttribute("twsetting") TweetSet twsetting) {
+		// ログインユーザの取得
+		Authentication auth = (Authentication) principal;
+		User user = (User) auth.getPrincipal();
+		List<Admin> admins = adminService.findAll();
+		Admin admin = null;
+		for (Admin a : admins) {
+			if (a.getAdmin_name().equals(user.getUsername())) {
+				admin = a;
+			}
+		}
+		
 		// 設定
 		Setting setting = admin.getSetting();
 		setting.setTwswitch(twsetting.isTwsw());
@@ -232,7 +256,18 @@ public class TLController {
 	// 定期ツイート追加処理
 	//
 	@RequestMapping(value = "ttadd", method = RequestMethod.POST)
-	public String addtt(@RequestParam("tt") String tt) {
+	public String addtt(Principal principal, @RequestParam("tt") String tt) {
+		// ログインユーザの取得
+		Authentication auth = (Authentication) principal;
+		User user = (User) auth.getPrincipal();
+		List<Admin> admins = adminService.findAll();
+		Admin admin = null;
+		for (Admin a : admins) {
+			if (a.getAdmin_name().equals(user.getUsername())) {
+				admin = a;
+			}
+		}
+		
 		// 追加処理
 		TeikiTweet teikiTweet = new TeikiTweet();
 		teikiTweet.setMsg(tt);
@@ -262,6 +297,7 @@ public class TLController {
 		Authentication auth = (Authentication) principal;
 		User user = (User) auth.getPrincipal();
 		List<Admin> admins = adminService.findAll();
+		Admin admin = null;
 		for (Admin a : admins) {
 			if (a.getAdmin_name().equals(user.getUsername())) {
 				admin = a;
@@ -299,6 +335,7 @@ public class TLController {
 		Authentication auth = (Authentication) principal;
 		User user = (User) auth.getPrincipal();
 		List<Admin> admins = adminService.findAll();
+		Admin admin = null;
 		for (Admin a : admins) {
 			if (a.getAdmin_name().equals(user.getUsername())) {
 				admin = a;
