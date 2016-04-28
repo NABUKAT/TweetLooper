@@ -5,4 +5,4 @@
 WEB UIでツイートを登録できる。
 
 導入方法はこちらに掲載
-http://noboke.sblo.jp/article/168355254.html
+http://noboke.sblo.jp/article/174646125.html
