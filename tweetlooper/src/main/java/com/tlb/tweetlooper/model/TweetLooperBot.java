@@ -2,6 +2,7 @@ package com.tlb.tweetlooper.model;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -17,9 +18,13 @@ import com.tlb.tweetlooper.service.SettingService;
 import com.tlb.tweetlooper.service.TeikiTweetService;
 
 import twitter4j.IDs;
+import twitter4j.Query;
+import twitter4j.QueryResult;
+import twitter4j.Status;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
 import twitter4j.TwitterFactory;
+import twitter4j.User;
 import twitter4j.conf.ConfigurationBuilder;
 
 @Component
@@ -37,10 +42,13 @@ public class TweetLooperBot {
 	AdminService adminService;
 
 	List<Admin> admins;
-	
-	//健全化実行間隔（1週間）
-	long healthtime = 86400 * 7;
 
+	// 健全化実行間隔（3日）
+	long healthtime = 86400 * 3;
+
+	// 自動フォロー間隔（1日）
+	long autofollowtime = 86400;
+	
 	// admin数の保持
 	int adminnum = 0;
 
@@ -104,8 +112,11 @@ public class TweetLooperBot {
 			}
 
 			// 健全化
-			if (timehasCome(healthtime) && (setting.getHealth1() || setting.getHealth2())) {
-				doHealth(setting, setting.getHealth1(), setting.getHealth2());
+			if(timehasCome(healthtime) && (setting.getHealth1() || setting.getHealth2() || setting.getAutofollow())){
+				doHealth(setting, setting.getHealth1(), setting.getHealth2(), setting.getAutofollow());
+			}
+			else if (timehasCome(autofollowtime) && setting.getAutofollow()) {
+				doHealth(setting, false, false, setting.getAutofollow());
 			}
 		}
 
@@ -146,8 +157,8 @@ public class TweetLooperBot {
 		}
 	}
 
-	// 健全化
-	private void doHealth(Setting setting, boolean isHealth1, boolean isHealth2) {
+	// 健全化、自動フォロー
+	private void doHealth(Setting setting, boolean isHealth1, boolean isHealth2, boolean isAutofollow) {
 		// Twitter
 		Twitter twitter = null;
 
@@ -165,14 +176,22 @@ public class TweetLooperBot {
 
 		// health1
 		if (isHealth1) {
-			System.out.println("health1を実行しました");
 			reduceUsers(twitter, myfollowIDs, myfollowerIDs);
 		}
 
 		// health2
 		if (isHealth2) {
-			System.out.println("health2を実行しました");
 			plusUsers(twitter, myfollowIDs, myfollowerIDs);
+		}
+
+		// autofollow
+		if (isAutofollow) {
+			String[] keywords = { "あ", "い", "う", "え", "お", "か", "き", "く", "け", "こ", "さ", "し", "す", "せ", "そ", "た", "ち",
+					"つ", "て", "と", "な", "に", "ぬ", "ね", "の", "は", "ひ", "ふ", "へ", "ほ", "ま", "み", "む", "め", "も", "や", "ゆ",
+					"よ", "ら", "り", "る", "れ", "ろ", "わ", "を" };
+			Random rnd = new Random();
+			int rndint = rnd.nextInt(keywords.length);
+			followUsers(twitter, findUsers(twitter, keywords[rndint], myfollowIDs));
 		}
 	}
 
@@ -250,5 +269,55 @@ public class TweetLooperBot {
 			e.printStackTrace();
 		}
 		return myfollowerIDs;
+	}
+
+	// ユーザ検索、ユーザネームのリストを返す
+	private List<User> findUsers(Twitter twitter, String keyword, ArrayList<Long> myfollowIDs) {
+		int max = 50;
+		int cnt = 0;
+		Query q = new Query(keyword);
+		QueryResult qr;
+
+		List<User> userlist = new ArrayList<User>();
+
+		// 検索処理
+		try {
+			do {
+				qr = twitter.search(q);
+				List<Status> tweets = qr.getTweets();
+				if (tweets != null) {
+					for (Status tw : tweets) {
+						User tmp = tw.getUser();
+						// 既に友達なら検索結果から除外
+						if (myfollowIDs.contains(tmp.getId())) {
+							break;
+						}
+						cnt++;
+						userlist.add(tmp);
+						if (max <= cnt) {
+							break;
+						}
+					}
+				}
+			} while ((q = qr.nextQuery()) != null && max > cnt);
+		} catch (TwitterException e) {
+			e.printStackTrace();
+		}
+
+		return userlist;
+	}
+
+	// フォロー
+	// 検索したユーザを全員フォローする
+	private void followUsers(Twitter twitter, List<User> userlist) {
+		if (userlist != null) {
+			for (User user : userlist) {
+				try {
+					twitter.createFriendship(user.getId());
+				} catch (TwitterException e) {
+					e.printStackTrace();
+				}
+			}
+		}
 	}
 }

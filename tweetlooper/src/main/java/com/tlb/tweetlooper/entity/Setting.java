@@ -36,4 +36,5 @@ public class Setting {
 	
 	public Boolean health1;
 	public Boolean health2;
+	public Boolean autofollow;
 }

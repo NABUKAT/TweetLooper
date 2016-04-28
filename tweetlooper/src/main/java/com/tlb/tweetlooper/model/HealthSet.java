@@ -6,4 +6,5 @@ import lombok.Data;
 public class HealthSet {
 	public boolean health1;
 	public boolean health2;
+	public boolean autofollow;
 }

@@ -176,6 +176,7 @@ public class TLController {
 		HealthSet healthset = new HealthSet();
 		healthset.setHealth1(setting.getHealth1());
 		healthset.setHealth2(setting.getHealth2());
+		healthset.setAutofollow(setting.getAutofollow());
 		model.addAttribute("healthset", healthset);
 
 		return "health";
@@ -413,6 +414,7 @@ public class TLController {
 		Setting setting = admin.getSetting();
 		setting.setHealth1(healthset.isHealth1());
 		setting.setHealth2(healthset.isHealth2());
+		setting.setAutofollow(healthset.isAutofollow());
 		Setting savedset = settingService.save(setting);
 		admin.setSetting(savedset);
 		
