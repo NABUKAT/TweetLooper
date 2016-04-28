@@ -72,7 +72,7 @@ public class TwitterFunctions {
 		return mta;
 	}
 
-	// フォロワーIDを取得
+	// フォローIDを取得
 	private void getMyFollorIDs() {
 		long cursor = -1L;
 		IDs ids;

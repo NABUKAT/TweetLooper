@@ -19,6 +19,7 @@ import com.tlb.tweetlooper.entity.LoopTweet;
 import com.tlb.tweetlooper.entity.Setting;
 import com.tlb.tweetlooper.entity.TeikiTweet;
 import com.tlb.tweetlooper.model.GetProperty;
+import com.tlb.tweetlooper.model.HealthSet;
 import com.tlb.tweetlooper.model.MyTwAccount;
 import com.tlb.tweetlooper.model.TweetSet;
 import com.tlb.tweetlooper.model.TwitterFunctions;
@@ -80,7 +81,7 @@ public class TLController {
 			}
 		}
 		model.addAttribute("username", user.getUsername());
-		
+
 		// アカウント情報の取得
 		if (twitterFunctions.checkTwitterSetting(admin.getSetting())) {
 			twitterFunctions.setting(admin.getSetting());
@@ -116,7 +117,7 @@ public class TLController {
 			MyTwAccount mta = twitterFunctions.getAccount();
 			model.addAttribute("mta", mta);
 		}
-		
+
 		// 定期ツイート一覧の表示
 		List<TeikiTweet> teikitws = admin.getTtlist();
 		model.addAttribute("teikitws", teikitws);
@@ -145,8 +146,39 @@ public class TLController {
 			MyTwAccount mta = twitterFunctions.getAccount();
 			model.addAttribute("mta", mta);
 		}
-		
+
 		return "search";
+	}
+
+	@RequestMapping(value = "health", method = RequestMethod.GET)
+	public String health(Model model, Principal principal) {
+		// ログインユーザの取得
+		Authentication auth = (Authentication) principal;
+		User user = (User) auth.getPrincipal();
+		List<Admin> admins = adminService.findAll();
+		Admin admin = null;
+		for (Admin a : admins) {
+			if (a.getAdmin_name().equals(user.getUsername())) {
+				admin = a;
+			}
+		}
+		model.addAttribute("username", user.getUsername());
+
+		// アカウント情報の取得
+		if (twitterFunctions.checkTwitterSetting(admin.getSetting())) {
+			twitterFunctions.setting(admin.getSetting());
+			MyTwAccount mta = twitterFunctions.getAccount();
+			model.addAttribute("mta", mta);
+		}
+		
+		// 設定読み出し
+		Setting setting = admin.getSetting();
+		HealthSet healthset = new HealthSet();
+		healthset.setHealth1(setting.getHealth1());
+		healthset.setHealth2(setting.getHealth2());
+		model.addAttribute("healthset", healthset);
+
+		return "health";
 	}
 
 	@RequestMapping(value = "/setting", method = RequestMethod.GET)
@@ -169,7 +201,7 @@ public class TLController {
 			MyTwAccount mta = twitterFunctions.getAccount();
 			model.addAttribute("mta", mta);
 		}
-		
+
 		// 設定読み出し
 		Setting setting = admin.getSetting();
 		TweetSet ts = new TweetSet();
@@ -200,7 +232,7 @@ public class TLController {
 				admin = a;
 			}
 		}
-		
+
 		// 追加処理
 		LoopTweet loopTweet = new LoopTweet();
 		loopTweet.setMsg(lt);
@@ -236,7 +268,7 @@ public class TLController {
 				admin = a;
 			}
 		}
-		
+
 		// 設定
 		Setting setting = admin.getSetting();
 		setting.setTwswitch(twsetting.isTwsw());
@@ -267,7 +299,7 @@ public class TLController {
 				admin = a;
 			}
 		}
-		
+
 		// 追加処理
 		TeikiTweet teikiTweet = new TeikiTweet();
 		teikiTweet.setMsg(tt);
@@ -312,7 +344,7 @@ public class TLController {
 			model.addAttribute("mta", mta);
 		}
 		// Twitterの設定が不十分なら検索しない
-		else{
+		else {
 			model.addAttribute("setting", "notenough");
 			return "search";
 		}
@@ -325,7 +357,7 @@ public class TLController {
 
 		return "search";
 	}
-	
+
 	//
 	// ユーザフォロー処理
 	//
@@ -350,14 +382,41 @@ public class TLController {
 			model.addAttribute("mta", mta);
 		}
 		// アカウント情報が不十分なら何もしない
-		else{
+		else {
 			return "search";
 		}
-		
+
 		// フォロー処理
 		twitterFunctions.followUsers();
-		
+
 		return "search";
+	}
+
+	//
+	// 健全化設定処理
+	//
+	@RequestMapping(value = "healthset", method = RequestMethod.POST)
+	public String healthset(Principal principal, @ModelAttribute("healthset") HealthSet healthset) {
+		
+		// ログインユーザの取得
+		Authentication auth = (Authentication) principal;
+		User user = (User) auth.getPrincipal();
+		List<Admin> admins = adminService.findAll();
+		Admin admin = null;
+		for (Admin a : admins) {
+			if (a.getAdmin_name().equals(user.getUsername())) {
+				admin = a;
+			}
+		}
+		
+		//設定
+		Setting setting = admin.getSetting();
+		setting.setHealth1(healthset.isHealth1());
+		setting.setHealth2(healthset.isHealth2());
+		Setting savedset = settingService.save(setting);
+		admin.setSetting(savedset);
+		
+		return "redirect:/health";
 	}
 
 	//

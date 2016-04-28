@@ -33,4 +33,7 @@ public class Setting {
 	public String consumerSecret;
 	public String accessToken;
 	public String accessTokenSecret;
+	
+	public Boolean health1;
+	public Boolean health2;
 }
