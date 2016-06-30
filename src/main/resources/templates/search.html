@@ -1,0 +1,161 @@
+<!DOCTYPE HTML>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta http-equiv="Content-Style-Type" content="text/css" />
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+
+<title>TweetLooper</title>
+
+<!-- Bootstrap core CSS -->
+<link href="/css/bootstrap.min.css" rel="stylesheet" />
+<link href="/css/style.css" rel="stylesheet" type="text/css" />
+</head>
+
+<body>
+
+	<div id="container">
+
+		<div id="header">
+			<div class="row">
+				<div class="col-md-9">
+					<h2>
+						<a href="/index">TweetLooper</a>
+					</h2>
+				</div>
+				<div class="col-md-3">
+					<span th:text="${username}"></span>&ensp;&ensp;<a
+						th:href="@{/logout}" class="btn btn-default btn-xs">ログアウト</a>
+				</div>
+			</div>
+			<div class="row" th:if="${mta != null}">
+				<h4>
+					<span
+						th:text="'@' + ${mta.screenname} + '、 フォロー：' + ${mta.friendsnum} + '、 フォロワー：' + ${mta.followersnum}"></span>
+				</h4>
+			</div>
+			<br clear="all" class="clear" />
+		</div>
+
+		<div id="wrapper">
+
+			<table border="0" cellspacing="15" cellpadding="0">
+				<tr>
+					<td id="side">
+						<div id="menu">
+							<ul>
+								<li class="normal"><span class="cicle">◆</span><a
+									href="/index">ループツイート</a></li>
+								<li class="normal"><span class="cicle">◆</span><a
+									href="/teiki">定期ツイート</a></li>
+								<li class="normal"><span class="cicle">◆</span><a
+									href="/search">検索</a></li>
+								<li class="normal"><span class="cicle">◆</span><a
+									href="/health">健全化・自動フォロー</a></li>
+								<li class="last"><span class="cicle">◆</span><a
+									href="/setting">設定</a></li>
+							</ul>
+
+							<br />
+						</div>
+					</td>
+
+					<td id="main">
+						<div class="contents">
+							<div class="row">
+								<h3>ユーザ検索・まとめてフォロー</h3>
+							</div>
+							<div class="row">
+								<div class="text,col-md-12">
+									&ensp;&ensp;検索したユーザをリスト表示し、まとめてフォローします。<br />
+									&ensp;&ensp;&ensp;※ 検索結果は上限50ユーザで表示します。<br />
+									&ensp;&ensp;&ensp;※ フォロワーが500人を超えるまでは、アカウント凍結回避のため<br />
+									&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;1日のフォロー数を50人程度にとどめてください。
+								</div>
+							</div>
+							<br />
+							<div class="row">
+								<h3>検索</h3>
+							</div>
+							<form role="form" action="#" th:action="@{/searchproc}"
+								method="post" id="ttform" autocomplete="off">
+								<div class="row">
+									<div class="col-md-10">
+										<div class="form-group">
+											<input type="text" name="word" id="tt" class="form-control"
+												placeholder="Twitter検索" required="required" maxlength="20"></input>
+										</div>
+									</div>
+									<div class="col-md-2">
+										<button id="btn-search" class="btn btn-primary">検索</button>
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-md-12">
+										<span th:if="${setting == 'notenough'}"><font
+											color="red">設定項目が不足しています</font></span>
+									</div>
+								</div>
+							</form>
+							<br />
+							<div class="row">
+								<h3>
+									検索結果一覧<span th:if="${listsize != null}"> （<span
+										th:text="${listsize}"></span>件）
+									</span>
+								</h3>
+							</div>
+							<p th:if="${#lists.isEmpty(searchlist)}">検索結果はありません</p>
+							<div th:if="${not #lists.isEmpty(searchlist)}">
+								<form role="form" action="#" th:action="@{/followproc}"
+									method="post" id="ttform" autocomplete="off">
+									<div class="row">
+										<div class="col-md-2">
+											<button id="btn-follow" class="btn btn-primary">まとめてフォロー</button>
+										</div>
+									</div>
+								</form>
+								<br/>
+							</div>
+							<table class="table table-striped"
+								th:if="${not #lists.isEmpty(searchlist)}">
+								<thead>
+									<tr>
+										<th class="col-md-10">ユーザ名</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr th:each="search : ${searchlist}">
+										<td th:text="${search}"></td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+					</td>
+				</tr>
+			</table>
+		</div>
+
+		<div id="copyright">
+
+			Copyright（c）2015 <a href="http://noboke.sblo.jp/">TrueWalk</a> all
+			rights reserved.
+
+		</div>
+	</div>
+	<!-- Bootstrap core JavaScript
+    ================================================== -->
+	<!-- Placed at the end of the document so the pages load faster -->
+	<script src="/js/jquery.min.js"></script>
+	<script src="/js/jquery.cookie.js"></script>
+	<script src="/js/bootstrap.min.js"></script>
+
+	<script type="text/javascript">
+	<!--
+		$(document).ready(function() {
+			$('#ltmin').focus();
+		});
+		-->
+	</script>
+</body>
+</html>
