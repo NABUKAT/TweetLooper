@@ -1,0 +1,179 @@
+﻿<!DOCTYPE HTML>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta http-equiv="Content-Style-Type" content="text/css" />
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+
+<title>TweetLooper</title>
+
+<!-- Bootstrap core CSS -->
+<link href="/css/bootstrap.min.css" rel="stylesheet" />
+<link href="/css/style.css" rel="stylesheet" type="text/css" />
+</head>
+
+<body>
+
+	<div id="container">
+
+		<div id="header">
+			<div class="row">
+				<div class="col-md-9">
+					<h2>
+						<a href="/index">TweetLooper</a>
+					</h2>
+				</div>
+				<div class="col-md-3">
+					<span th:text="${username}"></span>&ensp;&ensp;<a
+						th:href="@{/logout}" class="btn btn-default btn-xs">ログアウト</a>
+				</div>
+			</div>
+			<div class="row" th:if="${mta != null}">
+				<h4>
+					<span th:text="'@' + ${mta.screenname} + '、 フォロー：' + ${mta.friendsnum} + '、 フォロワー：' + ${mta.followersnum}"></span>
+				</h4>
+			</div>
+			<br clear="all" class="clear" />
+		</div>
+
+		<div id="wrapper">
+
+			<table border="0" cellspacing="15" cellpadding="0">
+				<tr>
+					<td id="side">
+						<div id="menu">
+							<ul>
+								<li class="normal"><span class="cicle">◆</span><a
+									href="/index">ループツイート</a></li>
+								<li class="normal"><span class="cicle">◆</span><a
+									href="/teiki">定期ツイート</a></li>
+								<li class="normal"><span class="cicle">◆</span><a
+									href="/search">検索</a></li>
+								<li class="normal"><span class="cicle">◆</span><a
+									href="/health">健全化・自動フォロー</a></li>
+								<li class="last"><span class="cicle">◆</span><a
+									href="/setting">設定</a></li>
+							</ul>
+
+							<br />
+						</div>
+					</td>
+
+					<td id="main">
+						<div class="contents">
+							<form role="form" action="#" th:action="@{/twsetting}"
+								method="post" autocomplete="off" th:object="${twsetting}">
+								<div class="row">
+									<h3>ツイートON／OFF</h3>
+								</div>
+								<div class="row">
+									<div class="col-md-1"></div>
+									<div class="col-md-1">
+										<input type="checkbox" data-toggle="switch" name="twswitch"
+											th:field="*{twsw}" />
+									</div>
+									<div class="col-md-10">ループツイート、定期ツイートの実行／停止</div>
+								</div>
+								<br />
+								<div class="row">
+									<h3>Twitter APIの設定</h3>
+								</div>
+								<div class="row" style="margin-top: 2px; padding-bottom: 2px;">
+									<div class="col-md-1"></div>
+									<div class="col-md-3">consumerKey</div>
+									<input class="col-md-7" type="text" placeholder="consumerKey"
+										th:field="*{consumerKey}" />
+									<div class="col-md-1"></div>
+								</div>
+								<div class="row" style="margin-top: 2px; padding-bottom: 2px;">
+									<div class="col-md-1"></div>
+									<div class="col-md-3">consumerSecret</div>
+									<input class="col-md-7" type="text"
+										placeholder="consumerSecret" th:field="*{consumerSecret}" />
+									<div class="col-md-1"></div>
+								</div>
+								<div class="row" style="margin-top: 2px; padding-bottom: 2px;">
+									<div class="col-md-1"></div>
+									<div class="col-md-3">accessToken</div>
+									<input class="col-md-7" type="text" placeholder="accessToken"
+										th:field="*{accessToken}" />
+									<div class="col-md-1"></div>
+								</div>
+								<div class="row" style="margin-top: 2px; padding-bottom: 2px;">
+									<div class="col-md-1"></div>
+									<div class="col-md-3">accessTokenSecret</div>
+									<input class="col-md-7" type="text"
+										placeholder="accessTokenSecret"
+										th:field="*{accessTokenSecret}" />
+									<div class="col-md-1"></div>
+								</div>
+								<br />
+								<div class="row">
+									<h3>ループツイートの設定</h3>
+								</div>
+								<div class="row">
+									<div class="col-md-1"></div>
+									<div class="text,col-md-11">ツイート間隔（分）</div>
+								</div>
+								<div class="row">
+									<div class="col-md-1"></div>
+									<div class="col-md-2">
+										<input type="text" name="ltmin" id="ltmin"
+											class="form-control" required="required" maxlength="4"
+											th:field="*{ltmin}"></input>
+									</div>
+									<div class="col-md-9"></div>
+								</div>
+								<br />
+								<div class="row">
+									<h3>定期ツイートの設定</h3>
+								</div>
+								<div class="row">
+									<div class="col-md-1"></div>
+									<div class="text,col-md-11">ツイート間隔（分）</div>
+								</div>
+								<div class="row">
+									<div class="col-md-1"></div>
+									<div class="col-md-2">
+										<input type="text" name="ttmin" id="ttmin"
+											class="form-control" required="required" maxlength="4"
+											th:field="*{ttmin}"></input>
+									</div>
+									<div class="col-md-9"></div>
+								</div>
+								<div class="row">
+									<div class="col-md-10"></div>
+									<div class="col-md-2">
+										<button id="btn-set" class="btn btn-primary">設定</button>
+									</div>
+								</div>
+							</form>
+						</div>
+					</td>
+				</tr>
+			</table>
+		</div>
+
+		<div id="copyright">
+
+			Copyright（c）2015 <a href="http://noboke.sblo.jp/">TrueWalk</a> all
+			rights reserved.
+
+		</div>
+	</div>
+	<!-- Bootstrap core JavaScript
+    ================================================== -->
+	<!-- Placed at the end of the document so the pages load faster -->
+	<script src="/js/jquery.min.js"></script>
+	<script src="/js/jquery.cookie.js"></script>
+	<script src="/js/bootstrap.min.js"></script>
+
+	<script type="text/javascript">
+	<!--
+		$(document).ready(function() {
+			$('#ltmin').focus();
+		});
+		-->
+	</script>
+</body>
+</html>

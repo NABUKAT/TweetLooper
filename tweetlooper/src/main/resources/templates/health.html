@@ -1,0 +1,143 @@
+<!DOCTYPE HTML>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta http-equiv="Content-Style-Type" content="text/css" />
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+
+<title>TweetLooper</title>
+
+<!-- Bootstrap core CSS -->
+<link href="/css/bootstrap.min.css" rel="stylesheet" />
+<link href="/css/style.css" rel="stylesheet" type="text/css" />
+
+</head>
+
+<body>
+
+	<div id="container">
+
+		<div id="header">
+			<div class="row">
+				<div class="col-md-9">
+					<h2>
+						<a href="/index">TweetLooper</a>
+					</h2>
+				</div>
+				<div class="col-md-3">
+					<span th:text="${username}"></span>&ensp;&ensp;<a
+						th:href="@{/logout}" class="btn btn-default btn-xs">ログアウト</a>
+				</div>
+			</div>
+			<div class="row" th:if="${mta != null}">
+				<h4>
+					<span th:text="'@' + ${mta.screenname} + '、 フォロー：' + ${mta.friendsnum} + '、 フォロワー：' + ${mta.followersnum}"></span>
+				</h4>
+			</div>
+			<br clear="all" class="clear" />
+		</div>
+		<div id="wrapper">
+
+			<table border="0" cellspacing="15" cellpadding="0">
+				<tr>
+					<td id="side">
+						<div id="menu">
+							<ul>
+								<li class="normal"><span class="cicle">◆</span><a
+									href="/index">ループツイート</a></li>
+								<li class="normal"><span class="cicle">◆</span><a
+									href="/teiki">定期ツイート</a></li>
+								<li class="normal"><span class="cicle">◆</span><a
+									href="/search">検索</a></li>
+								<li class="normal"><span class="cicle">◆</span><a
+									href="/health">健全化・自動フォロー</a></li>
+								<li class="last"><span class="cicle">◆</span><a
+									href="/setting">設定</a></li>
+							</ul>
+
+							<br />
+
+						</div>
+					</td>
+					<td id="main">
+						<div class="contents">
+							<div class="row">
+								<h3>健全化・自動フォロー</h3>
+							</div>
+							<div class="row">
+								<div class="text,col-md-12">
+									&ensp;&ensp;フォロー・フォロワーを健全化し、最適な状態にします。<br />
+									&ensp;&ensp;ユーザを自動フォローし、新規ユーザを取り入れます。
+								</div>
+							</div>
+							<br />
+							<div class="row">
+								<h3>施策一覧</h3>
+							</div>
+							<form role="form" action="#" th:action="@{/healthset}" method="post"
+								id="ltform" autocomplete="off" th:object="${healthset}">
+								<div class="row">
+									<div class="col-md-1"></div>
+									<div class="col-md-11">
+									<input type="checkbox" name="health1" id="check1" th:field="*{health1}"></input>
+									<label for="check1" class="checkbox-inline">
+										相互フォローでないフォローユーザを解除する(3日に1回実行)
+									</label>
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-md-1"></div>
+									<div class="col-md-11">
+									<input type="checkbox" name="health2" id="check2" th:field="*{health2}"></input>
+									<label for="check2" class="checkbox-inline">
+										自動で相互フォローする機能(3日に1回実行)
+									</label>
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-md-1"></div>
+									<div class="col-md-11">
+									<input type="checkbox" name="autofollow" id="check3" th:field="*{autofollow}"></input>
+									<label for="check3" class="checkbox-inline">
+										自動で50人フォローする(1日に1回実行)
+									</label>
+									</div>
+								</div>
+								<br />
+								<div class="row">
+									<div class="col-md-2"></div>
+									<div class="col-md-9">
+										<button id="btn-add" class="btn btn-primary">設定保存</button>
+									</div>
+									<div class="col-md-1"></div>
+								</div>
+							</form>
+						</div>
+					</td>
+				</tr>
+			</table>
+		</div>
+
+		<div id="copyright">
+
+			Copyright（c）2015 <a href="http://noboke.sblo.jp/">TrueWalk</a> all
+			rights reserved.
+
+		</div>
+	</div>
+	<!-- Bootstrap core JavaScript
+    ================================================== -->
+	<!-- Placed at the end of the document so the pages load faster -->
+	<script src="/js/jquery.min.js"></script>
+	<script src="/js/jquery.cookie.js"></script>
+	<script src="/js/bootstrap.min.js"></script>
+
+	<script type="text/javascript">
+	<!--
+		$(document).ready(function() {
+			$('#lt').focus();
+		});
+		-->
+	</script>
+</body>
+</html>
