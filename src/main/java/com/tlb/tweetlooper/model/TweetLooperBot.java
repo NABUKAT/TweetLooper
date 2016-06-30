@@ -191,7 +191,7 @@ public class TweetLooperBot {
 					"よ", "ら", "り", "る", "れ", "ろ", "わ", "を" };
 			Random rnd = new Random();
 			int rndint = rnd.nextInt(keywords.length);
-			followUsers(twitter, findUsers(twitter, keywords[rndint], myfollowIDs));
+			followUsers(twitter, findUsers(twitter, keywords[rndint], myfollowIDs, myfollowerIDs));
 		}
 	}
 
@@ -272,13 +272,21 @@ public class TweetLooperBot {
 	}
 
 	// ユーザ検索、ユーザネームのリストを返す
-	private List<User> findUsers(Twitter twitter, String keyword, ArrayList<Long> myfollowIDs) {
+	private List<User> findUsers(Twitter twitter,
+			String keyword,
+			ArrayList<Long> myfollowIDs,
+			ArrayList<Long> myfollowerIDs) {
 		int max = 50;
 		int cnt = 0;
 		Query q = new Query(keyword);
 		QueryResult qr;
 
 		List<User> userlist = new ArrayList<User>();
+		
+		// もしフォロワー数が500を超えていたら1日100人フォローする
+		if(myfollowerIDs.size() > 500){
+			max = 100;
+		}
 
 		// 検索処理
 		try {

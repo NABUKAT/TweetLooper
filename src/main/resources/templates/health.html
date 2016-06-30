@@ -99,7 +99,7 @@
 									<div class="col-md-11">
 									<input type="checkbox" name="autofollow" id="check3" th:field="*{autofollow}"></input>
 									<label for="check3" class="checkbox-inline">
-										自動で50人フォローする(1日に1回実行)
+										自動でn人フォローする(1日に1回実行、n = (フォロワー数) > 500 ? 100 : 50)
 									</label>
 									</div>
 								</div>
