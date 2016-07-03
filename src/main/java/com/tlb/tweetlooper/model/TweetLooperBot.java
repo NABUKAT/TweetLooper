@@ -43,11 +43,17 @@ public class TweetLooperBot {
 
 	List<Admin> admins;
 
-	// 健全化実行間隔（3日）
-	long healthtime = 86400 * 3;
-
-	// 自動フォロー間隔（1日）
-	long autofollowtime = 86400;
+	// 自動フォロー、健全化実行間隔(秒)
+	long healthtime = 43200;
+	
+	// 一回のフォロー数上限
+	int under100 = 10;
+	int over100 = 20;
+	int over1000 = 30;
+	int over10000 = 50;
+	
+	// 一回のアンフォロー数上限
+	int unfollownum = 20;
 	
 	// admin数の保持
 	int adminnum = 0;
@@ -114,9 +120,6 @@ public class TweetLooperBot {
 			// 健全化
 			if(timehasCome(healthtime) && (setting.getHealth1() || setting.getHealth2() || setting.getAutofollow())){
 				doHealth(setting, setting.getHealth1(), setting.getHealth2(), setting.getAutofollow());
-			}
-			else if (timehasCome(autofollowtime) && setting.getAutofollow()) {
-				doHealth(setting, false, false, setting.getAutofollow());
 			}
 		}
 
@@ -197,12 +200,19 @@ public class TweetLooperBot {
 
 	// 相互フォローでないフォローユーザを解除する
 	private void reduceUsers(Twitter twitter, ArrayList<Long> myfollowIDs, ArrayList<Long> myfollowerIDs) {
+		// 一回のアンフォローはunfollownum人まで
+		int cnt = 0;
+		
 		for (Long followid : myfollowIDs) {
 			if (!myfollowerIDs.contains(followid)) {
 				try {
 					twitter.destroyFriendship(followid);
 				} catch (TwitterException e) {
 					e.printStackTrace();
+				}
+				cnt++;
+				if(cnt > unfollownum){
+					break;
 				}
 			}
 		}
@@ -276,16 +286,24 @@ public class TweetLooperBot {
 			String keyword,
 			ArrayList<Long> myfollowIDs,
 			ArrayList<Long> myfollowerIDs) {
-		int max = 50;
+		int max = under100;
 		int cnt = 0;
 		Query q = new Query(keyword);
 		QueryResult qr;
 
 		List<User> userlist = new ArrayList<User>();
 		
-		// もしフォロワー数が500を超えていたら1日100人フォローする
-		if(myfollowerIDs.size() > 500){
-			max = 100;
+		// フォロワー数が100を超えていたら1回over100人フォローする
+		if(myfollowerIDs.size() > 100){
+			max = over100;
+		}
+		// フォロワー数が1000を超えていたら1回over1000人フォローする
+		else if(myfollowerIDs.size() > 1000){
+			max = over1000;
+		}
+		// フォロワー数が10000を超えていたら1回over10000人フォローする
+		else if(myfollowerIDs.size() > 10000){
+			max = over10000;
 		}
 
 		// 検索処理

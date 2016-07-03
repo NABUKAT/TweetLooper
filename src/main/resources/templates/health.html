@@ -81,7 +81,7 @@
 									<div class="col-md-11">
 									<input type="checkbox" name="health1" id="check1" th:field="*{health1}"></input>
 									<label for="check1" class="checkbox-inline">
-										相互フォローでないフォローユーザを解除する(3日に1回実行)
+										相互フォローでないフォローユーザを解除する(半日に1回実行、1回20人まで)
 									</label>
 									</div>
 								</div>
@@ -90,7 +90,7 @@
 									<div class="col-md-11">
 									<input type="checkbox" name="health2" id="check2" th:field="*{health2}"></input>
 									<label for="check2" class="checkbox-inline">
-										自動で相互フォローする機能(3日に1回実行)
+										自動で相互フォローする機能(半日に1回実行)
 									</label>
 									</div>
 								</div>
@@ -99,7 +99,7 @@
 									<div class="col-md-11">
 									<input type="checkbox" name="autofollow" id="check3" th:field="*{autofollow}"></input>
 									<label for="check3" class="checkbox-inline">
-										自動でn人フォローする(1日に1回実行、n = (フォロワー数) > 500 ? 100 : 50)
+										自動でn人フォローする(半日に1回実行、nはフォロワー数が百人以下で20、千人以下で40、1万人以下で60、1万人を超えたら100)
 									</label>
 									</div>
 								</div>
